@@ -2,6 +2,8 @@ use actix_web::{
     get, patch, post, App, HttpResponse, HttpServer, Responder,
 };
 
+mod models;
+
 //actic_Web get macro handler to get_pizzas
 #[get("/pizzas")]
 async fn get_pizzas() -> impl Responder {
@@ -13,6 +15,8 @@ async fn get_pizzas() -> impl Responder {
 async fn buy_pizza() -> impl Responder {
     HttpResponse::Ok().body("Buying a pizza")
 }
+
+
 
 #[patch("/updatepizza/{uuid}")]
 async fn update_pizza() -> impl Responder {
