@@ -1,8 +1,8 @@
-use actix_web::{
-    get, patch, post, App, HttpResponse, HttpServer, Responder,
-};
-
+use actix_web::{get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
 mod models;
+use crate::models::pizza::BuyPizzaRequest;
+use validator::Validate;
+use validator::ValidationErrors;
 
 //actic_Web get macro handler to get_pizzas
 #[get("/pizzas")]
@@ -12,11 +12,16 @@ async fn get_pizzas() -> impl Responder {
 }
 
 #[post("/buypizza")]
-async fn buy_pizza() -> impl Responder {
-    HttpResponse::Ok().body("Buying a pizza")
+async fn buy_pizza(body: Json<BuyPizzaRequest>) -> impl Responder {
+    let is_valid: Result<(), ValidationErrors> = body.validate();
+    match is_valid {
+        Ok(_) => {
+            let pizza_name: String = body.pizza_name.clone();
+            HttpResponse::Ok().body(format!("Pizza entered is {pizza_name}"))
+        }
+        Err(_) => HttpResponse::Ok().body(format!("Pizza name required!")),
+    }
 }
-
-
 
 #[patch("/updatepizza/{uuid}")]
 async fn update_pizza() -> impl Responder {
