@@ -44,3 +44,12 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
+
+//test endpoints
+
+// curl -i -X POST http://localhost:8080/buypizza -H 'Content-Type: application/json' -d '{"pizza_name": "triple cheese"}'
+// curl -i -X GET http://localhost:8080/pizzas
+// curl -i -X PATCH http://localhost:8080/updatepizza/1234567890 
+
+
+
