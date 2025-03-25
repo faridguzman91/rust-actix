@@ -11,6 +11,7 @@ async fn get_pizzas() -> impl Responder {
     HttpResponse::Ok().body("Pizzas available")
 }
 
+//actix_web post macro handler to buy_pizza
 #[post("/buypizza")]
 async fn buy_pizza(body: Json<BuyPizzaRequest>) -> impl Responder {
     let is_valid: Result<(), ValidationErrors> = body.validate();
@@ -23,6 +24,7 @@ async fn buy_pizza(body: Json<BuyPizzaRequest>) -> impl Responder {
     }
 }
 
+//actix_web patch macro handler to update_pizza
 #[patch("/updatepizza/{uuid}")]
 async fn update_pizza(update_pizza_url: Path<UpdatePizzaURL>) -> impl Responder {
     let uuid = update_pizza_url.into_inner().uuid;
