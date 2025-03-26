@@ -1,5 +1,7 @@
 use actix_web::{web::Path, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
 mod models;
+mod db;
+use crate::db::Database;
 use crate::models::pizza::{ BuyPizzaRequest, UpdatePizzaURL };
 use validator::Validate;
 use validator::ValidationErrors;
