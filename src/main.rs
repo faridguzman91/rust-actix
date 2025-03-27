@@ -44,11 +44,11 @@ async fn main() -> std::io::Result<()> {
     let db_data = Data::new(db);
 
 
-    HttpServer::new( move || { // move out of db_data closure because of type not implemeting the Copy
-        // trait
+    HttpServer::new( move || { // move db_data into closure because of type not implemeting the Copy
+        // trait which is Actix requirement
         //register get, buy, upddte pizzas route
         App::new()
-            .app_data(db_data.clone()) //clone 
+            .app_data(db_data.clone()) //clone to create multiple referencs to db
             .service(get_pizzas)
             .service(buy_pizza)
             .service(update_pizza)
