@@ -1,4 +1,4 @@
-use actix_web::{web::Path, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web::Path, web::Data, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
 mod models;
 mod db;
 use crate::db::Database;
@@ -36,9 +36,19 @@ async fn update_pizza(update_pizza_url: Path<UpdatePizzaURL>) -> impl Responder 
 //actix_web macro
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+
+    let db = Database::init()
+        .await
+        .expect("error connecting to db");
+
+    let db_data = Data::new(db);
+
+
+    HttpServer::new( move || { // move out of db_data closure because of type not implemeting the Copy
+        // trait
         //register get, buy, upddte pizzas route
         App::new()
+            .app_data(db_data.clone()) //clone 
             .service(get_pizzas)
             .service(buy_pizza)
             .service(update_pizza)

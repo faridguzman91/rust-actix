@@ -12,7 +12,7 @@ pub struct Database {
 impl Database {
     pub async fn init() -> Result<Self, Error> {
         let client = Surreal::new::<Ws>("127.0.0.1:8000").await?;
-        clinet
+        client
             .signin(Root {
                 username: "root",
                 password: "root",
