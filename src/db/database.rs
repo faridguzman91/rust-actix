@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use surrealdb::engine::remote::ws::{Client, Ws};
 use surrealdb::opt::auth::Root;
 use surrealdb::{Error, Surreal};
@@ -7,6 +8,13 @@ pub struct Database {
     pub client: Surreal<Client>,
     pub name_space: String,
     pub db_name: String,
+}
+
+//define pizza struct
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Pizza {
+    pub uuid: String,
+    pub pizza_name: String,
 }
 
 impl Database {
@@ -24,5 +32,13 @@ impl Database {
             name_space: String::from("surreal"),
             db_name: String::from("pizzas")
         })
+    }
+
+   pub async fn get_all_pizzas(&self) -> Option<Vec<Pizza>> {
+        let result = self.client.select("pizza").await;
+        match result {
+            Ok(all_pizzas) => Some(all_pizzas),
+            Err(_) => None,
+        }
     }
 }

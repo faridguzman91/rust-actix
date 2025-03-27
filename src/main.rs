@@ -8,10 +8,14 @@ use validator::ValidationErrors;
 
 //actic_Web get macro handler to get_pizzas
 #[get("/pizzas")]
-async fn get_pizzas() -> impl Responder {
-    //return 200 ok with string body
-    HttpResponse::Ok().body("Pizzas available")
+async fn get_pizzas(db: Data<Database>) -> impl Responder {
+    let pizzas = db.get_all_pizzas().await;
+    match pizzas {
+        Some(found_pizzas) => HttpResponse::Ok().body(format!("{:?}", found_pizzas)),
+        None => HttpResponse::InternalServerError().body("Error retrieving pizzas!"),
+    }
 }
+
 
 //actix_web post macro handler to buy_pizza
 #[post("/buypizza")]
