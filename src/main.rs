@@ -1,10 +1,9 @@
 use actix_web::{web::Path, web::Data, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
-use models::pizza::Pizza;
 use uuid::Uuid;
 mod models;
 mod db;
 use crate::db::Database;
-use crate::models::pizza::{ BuyPizzaRequest, UpdatePizzaURL };
+use crate::models::pizza::{ BuyPizzaRequest, UpdatePizzaURL, Pizza };
 use validator::Validate;
 use validator::ValidationErrors;
 
