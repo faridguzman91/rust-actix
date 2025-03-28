@@ -1,10 +1,12 @@
-use actix_web::{web::Path, web::Data, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    get, patch, post, web::Data, web::Json, web::Path, App, HttpResponse, HttpServer, Responder,
+};
 use error::PizzaError;
 use uuid::Uuid;
-mod models;
 mod db;
+mod models;
 use crate::db::Database;
-use crate::models::pizza::{ BuyPizzaRequest, UpdatePizzaURL, Pizza };
+use crate::models::pizza::{BuyPizzaRequest, Pizza, UpdatePizzaURL};
 use validator::Validate;
 use validator::ValidationErrors;
 mod error;
@@ -14,7 +16,7 @@ mod error;
 async fn get_pizzas(db: Data<Database>) -> Result<Json<Vec<Pizza>>, PizzaError> {
     let pizzas = db.get_all_pizzas().await;
     match pizzas {
-    Some(found_pizzas) => Ok(Json(found_pizzas)),
+        Some(found_pizzas) => Ok(Json(found_pizzas)),
         None => Err(PizzaError::NoPizzasFound),
     }
 }
@@ -32,7 +34,9 @@ async fn buy_pizza(body: Json<BuyPizzaRequest>, db: Data<Database>) -> impl Resp
             let new_pizza = db.add_pizza(Pizza::new(new_uuid, pizza_name)).await;
 
             match new_pizza {
-                Some(created) => HttpResponse::Ok().body(format!("Created new pizza: {:?}", created)),
+                Some(created) => {
+                    HttpResponse::Ok().body(format!("Created new pizza: {:?}", created))
+                }
                 None => HttpResponse::InternalServerError().body("Error buying pizza!"),
             }
         }
@@ -50,13 +54,12 @@ async fn update_pizza(update_pizza_url: Path<UpdatePizzaURL>) -> impl Responder 
 // Actix-web main function
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let db = Database::init()
-        .await
-        .expect("error connecting to db");
+    let db = Database::init().await.expect("error connecting to db");
 
     let db_data = Data::new(db);
 
-    HttpServer::new(move || { // move db_data into closure because of Actix requirements
+    HttpServer::new(move || {
+        // move db_data into closure because of Actix requirements
         App::new()
             .app_data(db_data.clone()) // Clone for multiple references to db
             .service(get_pizzas)
@@ -72,5 +75,3 @@ async fn main() -> std::io::Result<()> {
 // curl -i -X POST http://localhost:8080/buypizza -H 'Content-Type: application/json' -d '{"pizza_name": "triple cheese"}'
 // curl -i -X GET http://localhost:8080/pizzas
 // curl -i -X PATCH http://localhost:8080/updatepizza/1234567890
-
-

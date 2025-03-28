@@ -13,6 +13,7 @@ pub enum PizzaError {
 }
 
 impl ResponseError for PizzaError {
+    // convert status code responce to readable json with 'derive_more'
     fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::json())
