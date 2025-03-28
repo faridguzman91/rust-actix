@@ -1,4 +1,5 @@
 use actix_web::{web::Path, web::Data, get, patch, post, web::Json, App, HttpResponse, HttpServer, Responder};
+use error::PizzaError;
 use uuid::Uuid;
 mod models;
 mod db;
@@ -6,14 +7,15 @@ use crate::db::Database;
 use crate::models::pizza::{ BuyPizzaRequest, UpdatePizzaURL, Pizza };
 use validator::Validate;
 use validator::ValidationErrors;
+mod error;
 
 // Get all pizzas
 #[get("/pizzas")]
-async fn get_pizzas(db: Data<Database>) -> impl Responder {
+async fn get_pizzas(db: Data<Database>) -> Result<Json<Vec<Pizza>>, PizzaError> {
     let pizzas = db.get_all_pizzas().await;
     match pizzas {
-        Some(found_pizzas) => HttpResponse::Ok().body(format!("{:?}", found_pizzas)),
-        None => HttpResponse::InternalServerError().body("Error retrieving pizzas!"),
+    Some(found_pizzas) => Ok(Json(found_pizzas)),
+        None => Err(PizzaError::NoPizzasFound),
     }
 }
 
