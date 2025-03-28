@@ -1,2 +1,2 @@
-pub mod errors;
-pub use pizza_errors::PizzaError;
+pub mod pizza_error;
+pub use pizza_error::PizzaError;
